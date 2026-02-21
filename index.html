@@ -54,66 +54,34 @@
     <button id="main-btn">СОЗДАТЬ СТИКЕР</button>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-        const templates = [
-            {f: "Парашют.json", e: "🪂", n: "Парашют"},
-            {f: "Деньги.json", e: "💰", n: "Деньги"},
-            {f: "Шлем.json", e: "🪖", n: "Шлем"},
-            {f: "Круг.json", e: "🔘", n: "Круг"},
-            {f: "Парфюм.json", e: "🧼", n: "Парфюм"},
-            {f: "Маска.json", e: "🎭", n: "Маска"}
-            // Добавь сюда остальные из своего списка
-        ];
+    document.getElementById('main-btn').onclick = () => {
+        const textInput = document.getElementById('user-text').value.trim();
+        
+        if (!textInput) {
+            alert("Напиши текст!");
+            return;
+        }
 
-        const colors = ["⬛️", "🩸", "🌌", "🔥", "🎄", "🌅", "🌊", "✨", "⬜"];
-
-        let selectedTpl = templates[0].f;
-        let selectedCol = colors[0];
-
-        // Рендер шаблонов
-        const tplContainer = document.getElementById('templates');
-        templates.forEach(t => {
-            const el = document.createElement('div');
-            el.className = `tpl-card ${t.f === selectedTpl ? 'active' : ''}`;
-            el.innerHTML = `<span class="tpl-emoji">${t.e}</span><span class="tpl-name">${t.n}</span>`;
-            el.onclick = () => {
-                document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('active'));
-                el.classList.add('active');
-                selectedTpl = t.f;
-            };
-            tplContainer.appendChild(el);
-        });
-
-        // Рендер цветов
-        const colContainer = document.getElementById('colors');
-        colors.forEach(c => {
-            const el = document.createElement('div');
-            el.className = `color-item ${c === selectedCol ? 'active' : ''}`;
-            el.innerHTML = c;
-            el.onclick = () => {
-                document.querySelectorAll('.color-item').forEach(i => i.classList.remove('active'));
-                el.classList.add('active');
-                selectedCol = c;
-            };
-            colContainer.appendChild(el);
-        });
-
-        document.getElementById('main-btn').onclick = () => {
-            const text = document.getElementById('user-text').value.trim();
-            if (!text) {
-                tg.showAlert("Введите текст для стикера!");
-                return;
-            }
-            const data = {
-                tpl: selectedTpl,
-                text: text,
-                col: selectedCol
-            };
-            tg.sendData(JSON.stringify(data));
+        const payload = {
+            tpl: selectedTpl,
+            text: textInput,
+            col: selectedCol
         };
-    </script>
+
+        try {
+            // Пытаемся отправить
+            tg.sendData(JSON.stringify(payload));
+            // Если код дошел сюда, ты увидишь это окно:
+            alert("Данные отправлены боту! Закрываю окно...");
+            tg.close();
+        } catch (e) {
+            alert("Ошибка отправки: " + e.message);
+        }
+    };
+</script>
 </body>
+
 </html>
